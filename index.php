@@ -1,19 +1,49 @@
 <?php
 include 'vendor/autoload.php';
+require('vendor/electrolinux/phpquery/phpQuery/phpQuery.php');
+include 'function.php';
+
+
 $xml = file_get_contents('sitemap.xml');
+$service = new Sabre\Xml\Service();
+$result = $service->parse($xml);
 
-preg_match_all("/(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?/",$xml,$matches);
-$file = file_get_contents('https://www.ferplast.com/ru/sobaki.html'); // see below for source
 
-// loads the file
-// basically think of your php script as a regular HTML page running client side with jQuery.  This loads whatever file you want to be the current page
-phpQuery::newDocumentFileHTML($file);
+$page= file_get_contents('https://www.ferplast.com/ru/kontejnery-dlja-korma/feedy.html');
 
-// Once the page is loaded, you can then make queries on whatever DOM is loaded.
-// This example grabs the title of the currently loaded page.
-$titleElement = pq('h1'); // in jQuery, this would return a jQuery object.  I'm guessing something similar is happening here with pq.
+$document = phpQuery::newDocument($page);
 
-// You can then use any of the functionality available to that pq object.  Such as getting the innerHTML like I do here.
-$title = $titleElement->html();
+$ean = $document->find('.product-ean');
+$sku = pq('h1')->getString();
+//preg_match_all("/(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?/",$xml,$matches);
 
-var_dump($title);
+foreach ($ean as $el) {
+    debug($el->textContent) . '<br>';
+}
+//foreach ($sku as $el) {
+//
+//        debug($el->childNodes[0]) . '<br>';
+//
+//
+//}
+
+debug($page);
+
+?>
+<!--<table border="1">-->
+<!--    <caption>Таблица https://www.ferplast.com</caption>-->
+<!--    <tr>-->
+<!--        <th>Url</th>-->
+<!--        <th>SKU</th>-->
+<!--        <th>EAN</th>-->
+<!--        <th>Описание</th>-->
+<!--        <th>Характеристики</th>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>34,5</td>-->
+<!--        <td>3,5</td>-->
+<!--        <td>36</td>-->
+<!--        <td>23</td>-->
+<!--        <td>23</td>-->
+<!--    </tr>-->
+<!--</table>-->
